@@ -1,6 +1,7 @@
 /* init function purpose is to load the token list from uniswap before the modal is actually called up, otherwise the user has to wait 
  for it to load. init() is initalized when the page is loaded up
  */
+ const  qs = require('qs');
 
 
 //global variables to track if we are "from" or "to" side
@@ -101,6 +102,31 @@ function closeModal() {
 }
 
 
+async function getPrice(){
+    console.log("Getting Price");
+
+    if (!currentTrade.from || !currentTrade.to || !document.getElementById("from_amount").value) return;
+    let amount = Number(document.getElementById("from_amount").value * 10 ** currentTrade.from.decimals);
+
+    const params = {
+      sellToken: currentTrade.from.address,
+      buyToken: currentTrade.to.address,
+      sellAmount: amount,
+    }
+
+    // Fetch the swap price.
+    const response = await fetch(
+      `https://api.0x.org/swap/v1/price?${qs.stringify(params)}`
+      );
+
+    swapPriceJSON = await response.json();
+    console.log("Price: ", swapPriceJSON);
+
+    document.getElementById("to_amount").value = swapPriceJSON.buyAmount / (10 ** currentTrade.to.decimals);
+    document.getElementById("gas_estimate").innerHTML = swapPriceJSON.estimatedGas;
+  }
+
+
 //onClick events
 document.getElementById("from_token_select").onclick = () => {
     openModal("from");
@@ -111,5 +137,9 @@ document.getElementById("to_token_select").onclick = () => {
   };
 
 document.getElementById("modal_close").onclick = closeModal;
+
+
+document.getElementById("from_amount").onblur = getPrice;
+
 
 document.getElementById("login_button").onclick = connect;
