@@ -126,6 +126,34 @@ async function getPrice(){
     document.getElementById("gas_estimate").innerHTML = swapPriceJSON.estimatedGas;
   }
 
+async function getQuote(account) {
+    console.log("Getting quote");
+
+    if (!currentTrade.from || !currentTrade.to || !document.getElementById("from_amount").value) return;
+    let amount = Number(document.getElementById("from_amount").value *10 ** currentTrade.from.decimals);
+
+    const params = {
+        sellToken: currentTrade.from.address,
+        buyToken: currentTrade.to.address,
+        sellAmount: amount,
+        takerAddress: account,
+    }
+
+    //Fetch the swap quote
+    const response = await fetch(
+        `https://api.0x.org/swap/v1/quote?${qs.stringify(params)}`
+    )
+
+    swapQuoteJSON = await response.json();
+    console.log("Quote: ", swapQuoteJSON);
+
+    document.getElementById("to_amount").value = swapQuoteJSON.buyAmount / (10 ** currentTrade.to.decimals);
+    document.getElementById("gas_estimate").innerHTML = swapQuoteJSON.estimatedGas;
+
+    return swapQuoteJSON;
+
+}
+
 
 //onClick events
 document.getElementById("from_token_select").onclick = () => {
