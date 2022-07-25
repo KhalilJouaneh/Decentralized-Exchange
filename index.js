@@ -1,3 +1,37 @@
+/* init function purpose is to load the token list from uniswap before the modal is actually called up, otherwise the user has to wait 
+ for it to load. init() is initalized when the page is loaded up
+ */
+
+async function init() {
+    await listAvailableTokens();
+}
+
+ async function listAvailableTokens() {
+    console.log("initializing");
+    let response = await fetch('https://tokens.coingecko.com/uniswap/all.json');
+    let tokenListJSON = await response.json();
+    console.log("Listing available token: ", tokenListJSON);
+    tokens = tokenListJSON.tokens
+    console.log("tokens", tokens);
+
+    //Create a token list for the modal
+    let parent = document.getElementById("token_list");
+    //loop through all tokens inside the token list JSON object
+    for (const i in tokens) {
+        // Create a row for each token in the list
+        let div = document.createElement('div');
+        div.className = "token_row";
+        //for each row, display the token image and symbol
+        let html = `
+        <img class="token_list_img" src="${tokens[i].logoURI}">
+            <span class="token_list_text">${tokens[i].symbol}</span>
+        `;
+        div.innerHTML = html;
+        parent.appendChild(div);
+    }
+ }
+
+
 async function connect() {
     /** MetaMask injects a global API into websites visited by its users at `window.ethereum`. This API allows websites to request users' Ethereum accounts, read data from blockchains the user is connected to, and suggest that the user sign messages and transactions. The presence of the provider object indicates an Ethereum user. Read more: https://ethereum.stackexchange.com/a/68294/85979**/
 
@@ -20,6 +54,8 @@ async function connect() {
         document.getElementById("login_button").innerHTML = "Please install metamask";
     }
 }
+
+init();
 
 function openModal() {
     document.getElementById("token_modal").style.display = "block";
