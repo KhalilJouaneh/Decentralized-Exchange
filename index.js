@@ -2,6 +2,12 @@
  for it to load. init() is initalized when the page is loaded up
  */
 
+
+//global variables to track if we are "from" or "to" side
+let currentTrade = {};
+let currentSelectSide; 
+let tokens;
+
 async function init() {
     await listAvailableTokens();
 }
@@ -27,6 +33,9 @@ async function init() {
             <span class="token_list_text">${tokens[i].symbol}</span>
         `;
         div.innerHTML = html;
+        div.onclick = () => {
+            selectToken(tokens[i]);
+        };
         parent.appendChild(div);
     }
  }
@@ -57,7 +66,33 @@ async function connect() {
 
 init();
 
-function openModal() {
+function selectToken(token) {
+    // When a token is selected, automatically close the modal
+    closeModal();
+    // Track which side of the trade we are on - from/to
+    currentTrade[currentSelectSide] = token;
+    // Log the selected token
+	console.log("currentTrade:" , currentTrade);
+    renderInterface();
+}
+
+function renderInterface() {
+    if (currentTrade.from) {
+        // Set the from token image
+        document.getElementById("from_token_img").src = currentTrade.from.logoURI;
+        // Set the token symbol text
+        document.getElementById("from_token_text").innerHTML = currentTrade.from.symbol;
+    }
+
+    if (currentTrade.to) {
+        document.getElementById("to_token_img").src = currentTrade.to.logoURI;
+        document.getElementById("to_token_text").innerHTML = currentTrade.to.symbol;
+    }
+}
+
+function openModal(side) {
+    // Store whether the user has selected a token on the from or to side
+    currentSelectSide = side;
     document.getElementById("token_modal").style.display = "block";
 }
 
@@ -67,7 +102,14 @@ function closeModal() {
 
 
 //onClick events
-document.getElementById("from_token_select").onclick = openModal;
+document.getElementById("from_token_select").onclick = () => {
+    openModal("from");
+};
+
+document.getElementById("to_token_select").onclick = () => {
+    openModal("to");
+  };
+
 document.getElementById("modal_close").onclick = closeModal;
 
 document.getElementById("login_button").onclick = connect;
