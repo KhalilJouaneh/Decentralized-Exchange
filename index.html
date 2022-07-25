@@ -7,6 +7,7 @@
     <title>Swap Demo Tutorial</title>
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="./style.css">
@@ -25,7 +26,7 @@
                 <h4>Swap</h4>
                 <div id="form">
                     <div class="swapbox">
-                        <div class="swapbox_select token_select">
+                        <div class="swapbox_select token_select" id="from_token_select">
                             SELECT A TOKEN
                         </div>
                         <div class="swapbox_select">
@@ -42,6 +43,21 @@
                     </div>  
                     <div class="gas_estimate_label">Estimated Gas: <span id="gas_estimate"></span></div>
                     <button disabled class="btn btn-large btn-primary btn-block" id="swap_button">Swap</button>                
+                </div>
+            </div>
+        </div>
+    </div>
+    <div  class="modal"  id="token_modal"  tabindex="-1"  role="dialog">
+        <div class ="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select a token</h5>
+                    <button id="modal_close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
                 </div>
             </div>
         </div>
